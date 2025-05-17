@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Facturas Analizadas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+
+    <style>
+        /* Colores y estilos generales */
+        body {
+            padding: 20px;
+            font-family: 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif; /* Tipografía moderna */
+            background-color: #f8f9fa; /* Gris muy claro */
+            color: #343a40; /* Texto oscuro */
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: #ffffff; /* Blanco para contenedores */
+            padding: 30px;
+            border-radius: 12px; /* Bordes más redondeados */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra suave */
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #007bff; /* Título en color primario (azul Bootstrap) */
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease; /* Transición suave para hover */
+        }
+
+        /* Efecto Hover sobre el Título */
+        h1:hover {
+            color: #0056b3; /* Azul ligeramente más oscuro al pasar el mouse */
+            transform: translateY(-3px); /* Ligeramente arriba */
+            cursor: pointer; /* Indica interactividad */
+        }
+
+        /* Estilos para la tabla DataTables */
+        #tablaFacturas {
+            border-collapse: collapse; /* Para control total de bordes */
+            margin: 20px 0; /* Espacio arriba y abajo de la tabla */
+            font-size: 0.95em;
+            min-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil para la tabla */
+            border-radius: 8px; /* Bordes redondeados para la tabla */
+            overflow: hidden; /* Asegura que los bordes redondeados se apliquen */
+        }
+
+        #tablaFacturas thead tr {
+            background-color: #e9ecef; /* Fondo gris claro para el encabezado */
+            color: #495057; /* Texto gris oscuro en el encabezado */
+            text-align: left;
+            font-weight: bold;
+            border-bottom: none;
+        }
+
+        #tablaFacturas th,
+        #tablaFacturas td {
+            padding: 12px 15px; /* Espaciado interno */
+            border: 1px solid #dee2e6; /* Bordes sutiles */
+        }
+
+        #tablaFacturas tbody tr {
+            border-bottom: 1px solid #dee2e6; /* Borde inferior entre filas */
+             transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease-in-out, box-shadow 0.3s ease; /* Transición para hover */
+        }
+
+        /* Estilo para filas impares (stripe) */
+        #tablaFacturas tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa; /* Fondo ligeramente diferente */
+        }
+
+        /* Efecto Hover en filas */
+        #tablaFacturas tbody tr:hover {
+            background-color: #cfe2ff; /* Azul muy claro al pasar el mouse (ejemplo) */
+            color: #343a40; /* Asegura que el texto sea legible */
+            cursor: pointer;
+            transform: scale(1.005); /* Ligeramente más grande al hacer hover */
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.1); /* Sombra sutil con color primario */
+            position: relative; /* Necesario para el transform */
+            z-index: 1; /* Asegura que la fila hover esté por encima */
+        }
+
+        /* Estilos para los controles de DataTables (búsqueda, paginación, info) */
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_length label,
+        .dataTables_wrapper .dataTables_filter label {
+             color: #6c757d; /* Texto gris */
+        }
+
+         .dataTables_wrapper .dataTables_filter input,
+         .dataTables_wrapper .dataTables_length select {
+             border: 1px solid #dee2e6;
+             padding: 6px;
+             border-radius: 4px;
+             margin-left: 5px;
+             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+         }
+          .dataTables_wrapper .dataTables_filter input:focus,
+          .dataTables_wrapper .dataTables_length select:focus {
+              border-color: #007bff;
+              outline: none;
+              box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          }
+
+         .dataTables_wrapper .dataTables_paginate .paginate_button {
+             color: #007bff !important; /* Color del texto del botón */
+             border: 1px solid #dee2e6;
+             background-color: #ffffff;
+             border-radius: 5px;
+             margin: 0 3px;
+             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+         }
+         .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+             background-color: #007bff !important; /* Fondo azul al hacer hover */
+             color: white !important; /* Texto blanco al hacer hover */
+             border-color: #007bff !important;
+             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+         }
+         .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+             color: #adb5bd !important; /* Gris más claro para deshabilitados */
+             background-color: #e9ecef;
+             border-color: #dee2e6;
+             cursor: not-allowed;
+         }
+          .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+              background-color: #007bff !important;
+              color: white !important;
+              border-color: #007bff !important;
+          }
+
+          .dataTables_wrapper .dataTables_processing {
+              background-color: #ffffff !important;
+              color: #343a40 !important;
+          }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reporte de Facturas Analizadas</h1>
+
+        <table id="tablaFacturas" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre Archivo</th>
+                    <th>Número Factura</th>
+                    <th>Fecha Emisión</th>
+                    <th>Proveedor</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Fecha Procesamiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        // Este script se ejecutará una vez que la página se cargue.
+        // La variable 'invoicesData' será poblada por el script Python con los datos de la BD en formato JSON.
+        var invoicesData = {{ facturas_data | tojson }}; // Jinja2 placeholder para los datos
+
+        $(document).ready(function() {
+            // Inicializa DataTables en la tabla con id="tablaFacturas"
+            $('#tablaFacturas').DataTable({
+                data: invoicesData,
+                columns: [
+                    { data: 'id' },
+                    { data: 'nombre_archivo' },
+                    { data: 'numero_factura' },
+                    { data: 'fecha_emision' },
+                    { data: 'proveedor' },
+                    { data: 'cliente' },
+                    {
+                        data: 'total',
+                         render: function(data, type, row) {
+                            if (data === null) {
+                                return 'N/A';
+                            }
+                            if (type === 'display' || type === 'filter') {
+                                // Usar toLocaleString para formatear con separadores de miles y decimales locales
+                                return parseFloat(data).toLocaleString('es-AR', {
+                                     minimumFractionDigits: 2,
+                                     maximumFractionDigits: 2
+                                });
+                                // Descomenta si quieres añadir un símbolo de moneda
+                                // return parseFloat(data).toLocaleString('es-AR', {
+                                //     style: 'currency',
+                                //     currency: 'ARS', // O la moneda relevante
+                                //     minimumFractionDigits: 2,
+                                //     maximumFractionDigits: 2
+                                // });
+
+                            }
+                            return data;
+                         }
+                    },
+                    { data: 'fecha_procesamiento' }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' // Configurar idioma a español
+                },
+                pagingType: 'full_numbers',
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "Todos"]
+                ]
+            });
+        });
+    </script>
+
+</body>
+</html>
