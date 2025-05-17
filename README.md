@@ -114,10 +114,3 @@ Para poner en marcha este proyecto, sigue los siguientes pasos:
     ```
 5.  Abre el archivo `reporte_facturas.html` generado en la carpeta raíz de tu proyecto con tu navegador web preferido para ver el reporte interactivo.
 
-## Contribuciones
-
-(Aquí puedes añadir información sobre cómo otras personas pueden contribuir al proyecto, si es relevante).
-
-## Licencia
-
-(Aquí puedes especificar la licencia bajo la cual se distribuye tu proyecto, por ejemplo, MIT).
